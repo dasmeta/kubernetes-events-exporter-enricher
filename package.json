@@ -1,0 +1,8 @@
+{
+  "name": "kubernetes-events-exporter-enricher",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:dasmeta/kubernetes-events-exporter-enricher.git",
+  "author": "hovhannes.babayan <hovhannes.babayan@fouraitch.com>",
+  "license": "MIT"
+}
