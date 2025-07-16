@@ -1,8 +1,13 @@
 {
   "name": "kubernetes-events-exporter-enricher",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "main": "index.js",
   "repository": "git@github.com:dasmeta/kubernetes-events-exporter-enricher.git",
   "author": "hovhannes.babayan <hovhannes.babayan@fouraitch.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "@kubernetes/client-node": "^1.3.0",
+    "axios": "^1.10.0",
+    "express": "^5.1.0"
+  }
 }
