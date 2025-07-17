@@ -23,22 +23,36 @@ const coreV1 = kc.makeApiClient(k8s.CoreV1Api);
 const appsV1 = kc.makeApiClient(k8s.AppsV1Api);
 const batchV1 = kc.makeApiClient(k8s.BatchV1Api);
 const nodeV1 = kc.makeApiClient(k8s.NodeV1Api);
+const autoscalingV1 = kc.makeApiClient(k8s.AutoscalingV1Api);
+const autoscalingV2 = kc.makeApiClient(k8s.AutoscalingV2Api);
 const customObjects = kc.makeApiClient(k8s.CustomObjectsApi);
+
+async function getHPA(ref) {
+  if (ref.apiVersion === "autoscaling/v2") {
+    return (await autoscalingV2.readNamespacedHorizontalPodAutoscaler({ name: ref.name, namespace: ref.namespace }));
+  } else if (ref.apiVersion === "autoscaling/v1") {
+    return (await autoscalingV1.readNamespacedHorizontalPodAutoscaler({ name: ref.name, namespace: ref.namespace }));
+  } else {
+    throw new Error(`Unsupported HPA apiVersion: ${ref.apiVersion}`);
+  }
+}
 
 async function getData(ref) {
     switch (ref.kind) {
         case "Pod":
-            return (await coreV1.readNamespacedPod({name: ref.name, namespace: ref.namespace}));
+            return coreV1.readNamespacedPod({name: ref.name, namespace: ref.namespace});
         case "Deployment":
-            return (await appsV1.readNamespacedDeployment({name: ref.name, namespace: ref.namespace}));
+            return appsV1.readNamespacedDeployment({name: ref.name, namespace: ref.namespace});
         case "StatefulSet":
-            return (await appsV1.readNamespacedStatefulSet({name: ref.name, namespace: ref.namespace}));
+            return appsV1.readNamespacedStatefulSet({name: ref.name, namespace: ref.namespace});
         case "ReplicaSet":
-            return (await appsV1.readNamespacedReplicaSet({name: ref.name, namespace: ref.namespace}));
+            return appsV1.readNamespacedReplicaSet({name: ref.name, namespace: ref.namespace});
         case "DaemonSet":
-            return (await appsV1.readNamespacedDaemonSet({name: ref.name, namespace: ref.namespace}));
+            return appsV1.readNamespacedDaemonSet({name: ref.name, namespace: ref.namespace});
         case "Service":
-            return (await coreV1.readNamespacedService({name: ref.name, namespace: ref.namespace}));
+            return coreV1.readNamespacedService({name: ref.name, namespace: ref.namespace});
+        case "HorizontalPodAutoscaler":
+            return getHPA(ref);
         // Add more as needed
         default:
             throw new Error(`Fetching kind=${ref.kind} not implemented`);
