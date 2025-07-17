@@ -19,7 +19,6 @@ if(process.env.KUBERNETES_CONFIG_PATH) {
     kc.loadFromCluster()
 }
 
-
 const coreV1 = kc.makeApiClient(k8s.CoreV1Api);
 const appsV1 = kc.makeApiClient(k8s.AppsV1Api);
 const batchV1 = kc.makeApiClient(k8s.BatchV1Api);
@@ -49,6 +48,8 @@ async function getData(ref) {
 const app = express();
 app.use(bodyParser.json());
 
+app.get('/healthz', (req, res) => res.send('ok'));
+
 app.post("/events", async (req, res) => {
 
     const event = req.body;
@@ -74,6 +75,14 @@ app.post("/events", async (req, res) => {
 });
 
 const port = process.env.PORT || 8080;
-app.listen(port, () => {
-  console.log(`kuberneres-events-exporter enricher listening on port ${port}`);
+const server = app.listen(port, () => {
+  console.log(`kuberneres-events-exporter-enricher listening on port ${port}`);
+});
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM received, shutting down...');
+  server.close(() => {
+    console.log('HTTP server closed. Exiting.');
+    process.exit(0);
+  });
 });
