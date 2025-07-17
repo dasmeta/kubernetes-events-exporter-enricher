@@ -51,6 +51,12 @@ async function getData(ref) {
             return appsV1.readNamespacedDaemonSet({name: ref.name, namespace: ref.namespace});
         case "Service":
             return coreV1.readNamespacedService({name: ref.name, namespace: ref.namespace});
+        case "Job":
+            return batchV1.readNamespacedJob({name: ref.name, namespace: ref.namespace});
+        case "CronJob":
+            return batchV1.readNamespacedCronJob({name: ref.name, namespace: ref.namespace});
+        case "Node":
+            return coreV1.readNode({name: ref.name});
         case "HorizontalPodAutoscaler":
             return getHPA(ref);
         // Add more as needed
